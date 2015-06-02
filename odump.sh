@@ -2,13 +2,14 @@
 # Organize exit the objdump
 # Autor: Slack
 # Date: 24/03/2015
-# version 1.4
+# Update: 02/06/2015
+# version 1.6
 # ld -s hello.o bar.o -o foobar
 # Var COUNT -1 because in C, strlen () starts counting from zero, wc -l starts counting from one
 
 	# Test
-	if [[ "$#" < 2 ]]; then
-		echo "Usage: `basename $0` {-p|-s|-ps} filename.o"
+	if [[ "$#" -lt 2 ]]; then
+		echo "Usage: $(basename "$0") {-p|-s|-ps} filename.o"
 		echo "-p for print"
                 echo "-s just save"
                 echo "-ps save and print"
@@ -16,7 +17,7 @@
 	fi
 
 	if ! [[ "$2" =~ .o$ ]]; then
-		echo "Please check the argument "foo.o""
+		echo "Please check the argument foo.o"
 		echo "nasm -f elf foo.asm -o foo.o"
 		exit 1
 	fi
@@ -34,40 +35,42 @@
 	OUT="$2.txt"
 
 	# Working
-save () {
+function save() {
 	test -e "$2.txt" || touch "$2.txt"
 	echo "$ORGANIZE" > "$OUT"
-	echo "Length: $(expr "$COUNT" - 1 )" && echo "Length: $(expr "$COUNT" - 1 )" >> "$OUT"
+	echo "Length: $((COUNT - 1 ))" 
+	echo "Length: $((COUNT -1 ))" >> "$OUT"
+	
 	}
 
 
-print () {
+function print() {
 	echo
 	echo "**********Shellcode***********"
 	echo "$ORGANIZE"
 	echo "**********Shellcode***********"
 	echo
-	echo "Length: $(expr "$COUNT" - 1 )"
+	echo -e "Length: $((COUNT -1 ))"
 	echo
 	}
 
-	case "$1" in
+	case ${1} in
 		-p)
-		    print
+		    print "$1"
 		;;
 
 		-s)
-		    save
-       		    echo "Shellcode organized save in "$OUT""
+		    save "$1"
+       		    echo "Shellcode organized save in ${OUT}"
 		;;
 
 		-ps)
-		   save 
-		   print
+		   save "$1"
+		   print "$1"
 		;;
 
 		*)
-		   echo "Usage: `basename $0` {-p|-s|-ps} filename.o"
+		   echo "Usage: $(basename "$0") {-p|-s|-ps} filename.o"
 		   echo "-p for print"
 	           echo "-s just save"
 	           echo "-ps save and print"
